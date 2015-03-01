@@ -44,6 +44,8 @@ user.counts <- merge(x=user.counts, y=user.counts.ninety, by.x="ranking", by.y="
 
 rm(user.counts.highest, user.counts.ninety)
 
+
+
 # Convert NAs to 0
 user.counts$numUsersHighest[is.na(user.counts$numUsersHighest)] <- 0
 user.counts$numUsersNinety[is.na(user.counts$numUsersNinety)] <- 0
@@ -54,10 +56,14 @@ user.counts$numUsersNinety[is.na(user.counts$numUsersNinety)] <- 0
 user.counts$satisfiedUsersHighest <- cumsum(user.counts$numUsersHighest)/nrow(user.info)
 user.counts$satisfiedUsersNinety <- cumsum(user.counts$numUsersNinety)/nrow(user.info)
 
+
+
 # Melt the user.counts table
 satisfied.pct <- 
   select(user.counts, ranking, satisfiedUsersHighest, satisfiedUsersNinety) %>% 
   melt(id.vars="ranking", measure.vars=c("satisfiedUsersNinety", "satisfiedUsersHighest"), value.name="satisfiedPct")
+
+
 
 # Plot
 ggplot(data=satisfied.pct) + 
@@ -68,8 +74,4 @@ ggplot(data=satisfied.pct) +
   theme(legend.position=c(0.8,0.2)) + 
   labs(color="Percent Satisfaction") + 
   scale_color_hue(labels=c("90%","100%"))
-
-
-
-
 
