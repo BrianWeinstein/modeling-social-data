@@ -4,8 +4,7 @@
 #
 
 # count the number of unique stations
-sed 1d 201402-citibike-tripdata.csv | cut -d, -f4 | sort | uniq | wc -l # count the unique start station ids
-sed 1d 201402-citibike-tripdata.csv | cut -d, -f8 | sort | uniq | wc -l # also check the end station ids to verify
+sed 1d 201402-citibike-tripdata.csv | cut -d, -f4 | sort | uniq | wc -l
 
 # count the number of unique bikes
 sed 1d 201402-citibike-tripdata.csv | cut -d, -f12 | sort | uniq | wc -l
@@ -33,24 +32,3 @@ sed 1d 201402-citibike-tripdata.csv | cut -d, -f5 | grep '[0-9].*&.*[0-9]' | wc 
 
 # compute the average trip duration
 awk -F'"' '{tripdurationSum += $2} END {print tripdurationSum / NR}' 201402-citibike-tripdata.csv
-
-
-
-
-
-head -n1 201402-citibike-tripdata.csv | tr , '\n' | cat -n
-     1	"tripduration"
-     2	"starttime"
-     3	"stoptime"
-     4	"start station id"
-     5	"start station name"
-     6	"start station latitude"
-     7	"start station longitude"
-     8	"end station id"
-     9	"end station name"
-    10	"end station latitude"
-    11	"end station longitude"
-    12	"bikeid"
-    13	"usertype"
-    14	"birth year"
-    15	"gender"
