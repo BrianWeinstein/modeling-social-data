@@ -4,7 +4,7 @@ library(scales)
 library(reshape2)
 
 # Import the ratings.csv file
-raw.ratings <- read.csv(file=file.choose(), 
+raw.ratings <- read.csv(file=file.choose(), # Choose the ratings.csv file
                         header=FALSE, 
                         col.names=c("userID", "movieID", "rating", "timestamp"),
                         sep=",")
@@ -18,7 +18,7 @@ movie.info$ranking <- 1:nrow(movie.info)
 
 
 
-# Join movie rank value to ratings table
+# Join movie rank value to ratings table, sort by userID and ranking
 ratings <- left_join(x=ratings, y=movie.info, by="movieID") %>% arrange(userID, ranking)
 
 
@@ -31,7 +31,7 @@ user.info <-
 
 
 
-# Count the number of users at each highestRank and ninetyRank
+# Count the number of users at each highestRank and ninetyRank value
 user.counts.highest <- user.info %>% group_by(highestRank) %>% summarize(numUsersHighest=n())
 user.counts.ninety <- user.info %>% group_by(ninetyRank) %>% summarize(numUsersNinety=n())
 
@@ -52,7 +52,7 @@ user.counts$numUsersNinety[is.na(user.counts$numUsersNinety)] <- 0
 
 
 
-# Calculate cumulative user counts for each column and divide by the sum of each column
+# Calculate cumulative user counts for each column and divide by number of rows
 user.counts$satisfiedUsersHighest <- cumsum(user.counts$numUsersHighest)/nrow(user.info)
 user.counts$satisfiedUsersNinety <- cumsum(user.counts$numUsersNinety)/nrow(user.info)
 
@@ -67,11 +67,11 @@ satisfied.pct <-
 
 # Plot
 ggplot(data=satisfied.pct) + 
-  geom_line(aes(x=ranking, y=satisfiedPct, group=variable, color=variable)) + 
+  geom_line(aes(x=ranking, y=satisfiedPct, group=variable, color=variable), size=1.5) + 
   scale_x_continuous(labels=comma) +
   scale_y_continuous(labels=percent) +
   xlab("Inventory Size (Movie Rank)") + ylab("Percent of Users Satisfied") + ggtitle("Percent of Users Satisfied by Inventory Size") + 
-  theme(legend.position=c(0.8,0.2)) + 
+  theme(legend.position=c(0.8,0.3)) + 
   labs(color="Percent Satisfaction") + 
   scale_color_hue(labels=c("90%","100%"))
 
