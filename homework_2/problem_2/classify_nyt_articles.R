@@ -11,6 +11,7 @@ articles <- rbind(business, world) # Documents 1-1000 are 'business', 1001-2000 
 rm(business, world)
 
 
+
 # create a Corpus from the article snippets ##################################################
 corpus <- Corpus(VectorSource(articles$snippet))
 
@@ -35,6 +36,8 @@ dtm_to_sparse <- function(dtm) {
 
 dtmSM <- dtm_to_sparse(dtm)
 
+
+
 # create a train / test split  ###############################################################
 set.seed(12)
 ndx <- sample(1:nrow(dtmSM), round(nrow(dtmSM)*0.8), replace=F)
@@ -55,7 +58,6 @@ cvfit <- cv.glmnet(dtmSM.train, response.train, family="binomial", type.measure=
 
 cvfit$lambda.min
 coef(cvfit, s = "lambda.min")
-
 plot(cvfit)
 
 
@@ -79,12 +81,11 @@ pred <- prediction(pred, response.test)
 perf <- performance(pred, measure='tpr', x.measure='fpr')
 plot(perf)
 
-max(performance(pred, 'acc')@y.values[[1]]) # Accuracy
 sum(as.numeric(predictions) == response.test)/nrow(predictions) # Accuracy
 performance(pred, 'auc')@y.values[[1]] # AUC 
 
 
-# extract coefficients for words with non-zero weight
+# extract coefficients for words with non-zero weight #######################################
 # helper function
 get_informative_words <- function(crossval) {
   coefs <- coef(crossval, s="lambda.min")
@@ -95,6 +96,14 @@ get_informative_words <- function(crossval) {
   subset(coefs, weight != 0)
 }
 
-# show weights on words with top 10 weights for business
+words <- get_informative_words(cvfit)
 
-# show weights on words with top 10 weights for world
+# show weights on words with top 10 weights for business #######################################
+words.business <- subset(words, weight>0)
+words.business <- (words.business[order(words.business$weight*-1), ])[1:10, ]
+
+# show weights on words with top 10 weights for world ##########################################
+words.world <- subset(words, weight<0)
+words.world <- (words.world[order(words.world$weight), ])[1:10, ]
+
+
