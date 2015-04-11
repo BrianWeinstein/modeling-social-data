@@ -47,10 +47,10 @@ rm(ndx)
 # cross-validate logistic regression with cv.glmnet, measuring auc  ##########################
 
 # Create response vectors. 1=business, 0=world
-response.train <- as.numeric(as.numeric(rownames(dtmSM.train)) < 1000)
-response.test <- as.numeric(as.numeric(rownames(dtmSM.test)) < 1000)
+response.train <- as.numeric(as.numeric(rownames(dtmSM.train)) <= 1000)
+response.test <- as.numeric(as.numeric(rownames(dtmSM.test)) <= 1000)
 
-# Cross-validated logistic regression model, minimizing AUC
+# Cross-validated logistic regression model, measuring AUC
 cvfit <- cv.glmnet(dtmSM.train, response.train, family="binomial", type.measure="auc")
 
 cvfit$lambda.min
@@ -58,13 +58,31 @@ coef(cvfit, s = "lambda.min")
 
 plot(cvfit)
 
-# evaluate performance for the best-fit model
-
-View(predict(cvfit, newx = dtmSM.test, s = "lambda.min", type="class"))
 
 
+# evaluate performance for the best-fit model ################################################
 
-# plot ROC curve and output accuracy and AUC
+# Use the model to make predictions on the test data
+predictions <- predict(cvfit, newx=dtmSM.test, s="lambda.min", type="class")
+
+# View confustion matrix
+table(as.numeric(predictions), response.test)
+
+
+
+
+# plot ROC curve and output accuracy and AUC  ################################################
+
+# Plot ROC curve
+pred <- as.numeric(predict(cvfit, dtmSM.test, s="lambda.min", type="response"))
+pred <- prediction(pred, response.test)
+perf <- performance(pred, measure='tpr', x.measure='fpr')
+plot(perf)
+
+max(performance(pred, 'acc')@y.values[[1]]) # Accuracy
+sum(as.numeric(predictions) == response.test)/nrow(predictions) # Accuracy
+performance(pred, 'auc')@y.values[[1]] # AUC 
+
 
 # extract coefficients for words with non-zero weight
 # helper function
