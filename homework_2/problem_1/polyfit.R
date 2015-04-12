@@ -52,7 +52,7 @@ fitPlotData <- data.frame(degree=rep(1:nrow(fit), 2),
 ggplot(data=fitPlotData, aes(x=degree, y=test, group=fit, color=fit, shape=fit)) + 
   geom_line() + 
   geom_point() + 
-  geom_vline(xintercept=optimal.degree, color="gray", linetype="dashed") + 
+  geom_vline(xintercept=optimal.degree, color="darkgray", linetype="dashed") + 
   xlab("Degree") + ylab("RMSE") + ggtitle("RMSE vs Degree") + 
   theme_bw() + theme(legend.position=c(0.8,0.8)) +
   labs(group="", color="", shape="")
