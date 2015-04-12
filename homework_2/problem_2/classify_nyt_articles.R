@@ -100,7 +100,7 @@ words <- get_informative_words(cvfit)
 
 # Show weights on words with top 10 weights for business
 words.business <- subset(words, weight>0)
-words.business <- (words.business[order(words.business$weight*-1), ])[1:11, ]
+words.business <- (words.business[order(words.business$weight*-1), ])[1:10, ]
 
 # Show weights on words with top 10 weights for world
 words.world <- subset(words, weight<0)
